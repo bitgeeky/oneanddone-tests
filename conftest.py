@@ -8,12 +8,16 @@ import pytest
 import requests
 
 from mocks.mock_user import MockUser
-
+from mocks.oneanddone_api import OneAndDoneAPI
 
 @pytest.fixture(scope='function')
-def new_user():
+def new_user(request):
     personatestuser_uri = 'http://personatestuser.org/email'
     
+    mozwebqa = request.getfuncargvalue('mozwebqa')
+    credentials = mozwebqa.credentials['default']
+    api = OneAndDoneAPI(credentials['api_user'], credentials['api_key'], mozwebqa.base_url)
+
     # Request TestUser credentials from http://personatestuser.org
     try:
         response = requests.get(personatestuser_uri)
@@ -23,7 +27,9 @@ def new_user():
 
     def fin():
         # delete user after the test from database using API
-        pass
+        if request.new_user:
+            api.delete_user(request.new_user)
 
+    request.addfinalizer(fin)
     testuser = response.json()
     return MockUser(email = testuser['email'], password = testuser['pass'])
