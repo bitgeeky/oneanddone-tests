@@ -31,6 +31,7 @@ class Base(Page):
     class HeaderRegion(Page):
         _browserid_login_locator = (By.CSS_SELECTOR, '.browserid-login > span')
         _logout_menu_item_locator = (By.CSS_SELECTOR, '.auth-menu > .browserid-logout')
+        _auth_menu_locator = (By.CSS_SELECTOR, '#nav-main-menu .auth-menu')
 
         def click_sign_in(self):
             self.selenium.find_element(*self._browserid_login_locator).click()
@@ -47,3 +48,7 @@ class Base(Page):
         @property
         def is_sign_in_visible(self):
             return self.is_element_visible(*self._browserid_login_locator)
+
+        @property
+        def diplayed_text(self):
+            return self.selenium.find_element(*self._auth_menu_locator).text

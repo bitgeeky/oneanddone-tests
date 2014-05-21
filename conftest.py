@@ -27,8 +27,9 @@ def new_user(request):
 
     def fin():
         # delete user after the test from database using API
-        if request.new_user:
-            api.delete_user(request.new_user)
+        #if request.new_user:
+        #    api.delete_user(request.new_user)
+        pass
 
     request.addfinalizer(fin)
     testuser = response.json()

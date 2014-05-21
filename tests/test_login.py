@@ -21,3 +21,9 @@ class TestSignIn:
 
         home_page.sign_in(new_user)
         Assert.true(home_page.is_signed_in)
+
+        create_profile_page = home_page.create_profile_page
+        create_profile_page.enter_name("Test User")
+        create_profile_page.click_save_button()
+
+        Assert.true("Test User" in home_page.header.diplayed_text)
