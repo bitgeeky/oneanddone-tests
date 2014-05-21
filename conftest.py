@@ -32,4 +32,5 @@ def new_user(request):
 
     request.addfinalizer(fin)
     testuser = response.json()
-    return MockUser(email = testuser['email'], password = testuser['pass'])
+    request.new_user = MockUser(email = testuser['email'], password = testuser['pass'])
+    return request.new_user
