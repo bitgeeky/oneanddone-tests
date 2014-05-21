@@ -11,7 +11,7 @@ class MockUser(dict):
 
         self['email'] = 'testuser@moztest.com'
         self['password'] = 'p@ssw0rd'
-        self['realname'] = 'Mozilla WebUser Test'
+        self['fullname'] = 'Mozilla WebUser'
 
         self.update(**kwargs)
 
