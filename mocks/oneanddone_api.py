@@ -12,21 +12,17 @@ import requests
 
 class OneAndDoneAPI:
 
-    def __init__(self, username, api_key, base_url):
-        self.params = {
-            u'username': unicode(username),
-            u'api_key': unicode(api_key),
-            u'format': u'json',
-        }
+    def __init__(self, api_token, base_url):
         self.base_url = base_url
-        self.headers = {'content-type': 'application/json'}
+        self.token_authorization = 'Token %s' % (api_token)
+        self.headers = {'Authorization':self.token_authorization}
 
     def _do_delete(self, uri, lookup_field):
         """Make a Delete Request"""
         response = requests.delete(
-            "%s/%s/%s" % (self.base_url, uri, lookup_field),
-            params=self.params,
+            '%s/%s/%s/' % (self.base_url, uri, lookup_field),
             headers=self.headers)
+
         response.raise_for_status()
         if response.status_code == 204:
             return True
@@ -37,5 +33,4 @@ class OneAndDoneAPI:
 
     def delete_user(self, user):
         uri = 'api/v1/users'
-        self.params['permanent'] = True
         Assert.true(self._do_delete(uri, user['email']), 'Deletion of user with email %s failed' % user['email'])

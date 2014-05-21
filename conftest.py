@@ -16,7 +16,7 @@ def new_user(request):
     
     mozwebqa = request.getfuncargvalue('mozwebqa')
     credentials = mozwebqa.credentials['default']
-    api = OneAndDoneAPI(credentials['api_user'], credentials['api_key'], mozwebqa.base_url)
+    api = OneAndDoneAPI(credentials['api_token'], mozwebqa.base_url)
 
     # Request TestUser credentials from http://personatestuser.org
     try:
@@ -27,9 +27,8 @@ def new_user(request):
 
     def fin():
         # delete user after the test from database using API
-        #if request.new_user:
-        #    api.delete_user(request.new_user)
-        pass
+        if request.new_user:
+            api.delete_user(request.new_user)
 
     request.addfinalizer(fin)
     testuser = response.json()
