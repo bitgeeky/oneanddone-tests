@@ -20,7 +20,10 @@ class UserProfileEditPage(Base):
     def enter_name(self, fullname):
         self.type_in_element(self._name_input_locator, fullname)
 
-    def check_privacy_policy_checkbox(self):
+    def verify_privacy_policy_checkbox_is_selected(self):
+        self.selenium.find_element(*self._privacy_policy_checkbox_locator).is_selected()
+
+    def toggle_privacy_policy_checkbox(self):
         self.selenium.find_element(*self._privacy_policy_checkbox_locator).click()
 
     def click_save_button(self):
