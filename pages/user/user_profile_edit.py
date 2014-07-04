@@ -17,11 +17,12 @@ class UserProfileEditPage(Base):
     _privacy_policy_checkbox_locator = (By.ID, 'id_privacy_policy_accepted')
     _save_button_locator = (By.CSS_SELECTOR, '.edit-profile > .actions-container > .button')
 
+    @property
+    def is_privacy_policy_checkbox_checked(self):
+        return self.selenium.find_element(*self._privacy_policy_checkbox_locator).is_selected()
+    
     def enter_name(self, fullname):
         self.type_in_element(self._name_input_locator, fullname)
-
-    def verify_privacy_policy_checkbox_is_selected(self):
-        self.selenium.find_element(*self._privacy_policy_checkbox_locator).is_selected()
 
     def toggle_privacy_policy_checkbox(self):
         self.selenium.find_element(*self._privacy_policy_checkbox_locator).click()
