@@ -12,6 +12,7 @@ from pages.page import Page
 
 class Base(Page):
 
+    _logo_container_locator = (By.ID, 'logo-container')
     _browserid_login_locator = (By.CSS_SELECTOR, '.browserid-login > span')
     _logout_menu_item_locator = (By.CSS_SELECTOR, '.auth-menu > .browserid-logout')
 
@@ -30,6 +31,9 @@ class Base(Page):
         self.wait_for_element_visible(*self._logout_menu_item_locator)
         return self.expected_page(expectation)
 
+    def logout(self):
+        self.selenium.find_element(*self._logout_menu_item_locator).click()
+
     def expected_page(self, expectation):
         if expectation == 'user_profile':
             from pages.user.user_profile_edit import UserProfileEditPage
@@ -40,6 +44,11 @@ class Base(Page):
 
     def click_browserid_login(self):
         self.selenium.find_element(*self._browserid_login_locator).click()
+
+    def click_logo_container(self):
+        self.selenium.find_element(*self._logo_container_locator).click()
+        from pages.home import HomePage
+        return HomePage(self.testsetup)
 
     class HeaderRegion(Page):
 

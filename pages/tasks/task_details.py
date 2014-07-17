@@ -29,6 +29,10 @@ class TaskDetailsPage(Base):
         return self.selenium.find_element(*self._name_locator).text
 
     @property
+    def is_completed_button_visible(self):
+        return self.selenium.find_element(*self._get_started_button_locator).text == 'Completed'
+
+    @property
     def is_get_started_button_visible(self):
         return self.is_element_visible(*self._get_started_button_locator)
 
@@ -60,8 +64,15 @@ class TaskDetailsPage(Base):
     def is_complete_task_button_not_visible(self):
         return self.is_element_not_visible(*self._complete_task_button_locator)
 
-    def click_get_started_button(self):
+    def go_to_page(self, task_id):
+        self.selenium.get(self.base_url + '/tasks/%d/'%task_id)
+        self.is_the_current_page
+
+    def click_get_started_button(self, expected_page='task_details'):
         self.selenium.find_element(*self._get_started_button_locator).click()
+        if expected_page == 'login_required':
+            from pages.login_required import LoginRequiredPage
+            return LoginRequiredPage(self.testsetup)
 
     def click_save_for_later_button(self):
         self.selenium.find_element(*self._save_for_later_button_locator).click()

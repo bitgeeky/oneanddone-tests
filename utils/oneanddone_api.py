@@ -68,3 +68,23 @@ class OneAndDoneAPI:
         user['profile']['name'] = response_text['profile']['name']
         Assert.greater(user['id'], 0, 'No user was created.')
         return user
+
+    def delete_task(self, task):
+        uri = 'api/v1/task'
+        Assert.true(self._do_delete(uri, task['id']), 'Deletion of task with id %s failed' % task['id'])
+
+    def create_task(self, task):
+        uri = 'api/v1/task'
+        post_data = {
+            "name": task['name'], "short_description": task['short_description'],
+            "instructions": task['instructions'], "prerequisites":task['prerequisites'],
+            "execution_time": task['execution_time'], "is_draft": task['is_draft'], "project": task['project'],
+            "team": task['team'], "type": task['type'], "repeatable": task['repeatable'],
+            "start_date": task['start_date'], "end_date": task['end_date'], "difficulty": task['difficulty'],
+            "why_this_matters": task['why_this_matters'],
+            "keyword_set": [{"name": keyword} for keyword in task['keyword_list']],
+            "taskattempt_set": task['taskattempt_set']
+        }
+        task['id'], response_text = self._do_post(uri, post_data, True)
+        Assert.greater(task['id'], 0, 'No task was created.')
+        return task

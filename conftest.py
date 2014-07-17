@@ -8,6 +8,7 @@ import pytest
 import requests
 
 from mocks.mock_user import MockUser
+from mocks.mock_task import MockTask
 from utils.oneanddone_api import OneAndDoneAPI
 
 
@@ -28,6 +29,18 @@ def create_user_in_database(mozwebqa, user):
     credentials = mozwebqa.credentials['default']
     api = OneAndDoneAPI(credentials['api_token'], mozwebqa.base_url)
     return api.create_user(user)
+
+
+def delete_task_from_database(mozwebqa, task):
+    credentials = mozwebqa.credentials['default']
+    api = OneAndDoneAPI(credentials['api_token'], mozwebqa.base_url)
+    api.delete_task(task)
+
+
+def create_task_in_database(mozwebqa, task):
+    credentials = mozwebqa.credentials['default']
+    api = OneAndDoneAPI(credentials['api_token'], mozwebqa.base_url)
+    return api.create_task(task)
 
 
 @pytest.fixture(scope='function')
@@ -72,3 +85,22 @@ def new_user(request):
 
     request.addfinalizer(fin)
     return request.new_user
+
+
+@pytest.fixture(scope='function')
+def tasks_for_test_one_time_task(request):
+    mozwebqa = request.getfuncargvalue('mozwebqa')
+    request.tasks_for_test_one_time_task = create_task_in_database(
+        mozwebqa, MockTask(repeatable = False)
+    )
+
+    def fin():
+        # Delete tasks from application database after the test
+        if request.tasks_for_test_one_time_task:
+            delete_task_from_database(
+                mozwebqa,
+                request.tasks_for_test_one_time_task
+            )
+
+    request.addfinalizer(fin)
+    return request.tasks_for_test_one_time_task
