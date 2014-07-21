@@ -58,10 +58,14 @@ def existing_user(request):
 @pytest.fixture(scope='function')
 def new_user(request):
     testuser = get_personatestuser()
+    username = testuser['email'].split('@')[0]
     request.new_user = MockUser(
         email=testuser['email'],
-        username=testuser['email'].split('@')[0],
-        password=testuser['pass']
+        username=username,
+        password=testuser['pass'],
+        profile={'name': 'mozwebqa_testuser',
+                 'username': username,
+                 'privacy_policy_accepted': True}
     )
 
     def fin():

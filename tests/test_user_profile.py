@@ -93,3 +93,34 @@ class TestUserProfile:
         user_profile_edit_page = home_page.header.click_user_profile_details().click_edit_profile_button()
         Assert.equal(new_display_name, user_profile_edit_page.display_name)
         Assert.equal(new_username, user_profile_edit_page.username)
+
+    @pytest.mark.credentials
+    def test_that_duplicate_usernames_are_not_allowed(self, mozwebqa, new_user, existing_user):
+        home_page = HomePage(mozwebqa)
+        home_page.go_to_page()
+        Assert.false(home_page.is_user_logged_in)
+
+        user_profile_edit_page = home_page.login(new_user, 'user_profile')
+        Assert.true(user_profile_edit_page.is_the_current_page)
+        Assert.true(user_profile_edit_page.is_user_logged_in)
+
+        user_profile_edit_page.enter_name(new_user['profile']['name'])
+        user_profile_edit_page.enter_username(existing_user['profile']['username'])
+        Assert.true(user_profile_edit_page.is_privacy_policy_checkbox_checked)
+
+        user_profile_edit_page.click_save_button('Errors')
+        Assert.true(user_profile_edit_page.is_the_current_page)
+        Assert.true('User profile with this Username already exists.' in user_profile_edit_page.display_errors)
+
+        user_profile_edit_page.enter_username(new_user['profile']['username'])
+        logged_in_home_page = user_profile_edit_page.click_save_button()
+        user_profile_edit_page = logged_in_home_page.header.click_user_profile_details().click_edit_profile_button()
+
+        user_profile_edit_page.enter_username(existing_user['profile']['username'])
+        user_profile_edit_page.click_save_button()
+        Assert.true(user_profile_edit_page.is_the_current_page)
+        Assert.true('User profile with this Username already exists.' in user_profile_edit_page.display_errors)
+
+        user_profile_edit_page.enter_username(new_user['profile']['username'])
+        logged_in_home_page = user_profile_edit_page.click_save_button()
+        Assert.true(logged_in_home_page.is_the_current_page)

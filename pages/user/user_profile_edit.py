@@ -20,6 +20,11 @@ class UserProfileEditPage(Base):
     _privacy_policy_checkbox_locator = (By.ID, 'id_pp_checkbox')
     _delete_profile_button_locator = (By.ID, 'delete-profile')
     _save_button_locator = (By.ID, 'save-profile')
+    _displayed_errors_locator = (By.CSS_SELECTOR, 'ul.errorlist > li')
+
+    @property
+    def display_errors(self):
+        return [web_element.text for web_element in self.selenium.find_elements(*self._displayed_errors_locator)]
 
     @property
     def display_name(self):
@@ -46,6 +51,7 @@ class UserProfileEditPage(Base):
         self.selenium.find_element(*self._delete_profile_button_locator).click()
         return UserProfileDeletePage(self.testsetup)
 
-    def click_save_button(self):
+    def click_save_button(self, expected='Home'):
         self.selenium.find_element(*self._save_button_locator).click()
-        return HomePage(self.testsetup)
+        if expected == 'Home':
+            return HomePage(self.testsetup)
