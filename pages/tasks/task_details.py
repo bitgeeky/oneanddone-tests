@@ -33,6 +33,10 @@ class TaskDetailsPage(Base):
         return self.selenium.find_element(*self._get_started_button_locator).text == 'Completed'
 
     @property
+    def is_taken_button_visible(self):
+        return self.selenium.find_element(*self._get_started_button_locator).text == 'Taken'
+
+    @property
     def is_get_started_button_visible(self):
         return self.is_element_visible(*self._get_started_button_locator)
 

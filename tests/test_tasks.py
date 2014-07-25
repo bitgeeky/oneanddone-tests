@@ -15,6 +15,7 @@ class TestTasks:
 
     @pytest.mark.credentials
     def test_that_one_time_task_is_marked_completed_on_completion(self, mozwebqa, existing_user, tasks_for_test_one_time_task):
+        existing_user = existing_user.get()
         task_details_page = TaskDetailsPage(mozwebqa)
         task_details_page.go_to_page(tasks_for_test_one_time_task['id'])
 
@@ -40,3 +41,14 @@ class TestTasks:
 
         task_details_page = user_profile_details_page.completed_tasks[0].click()
         Assert.true(task_details_page.is_completed_button_visible)
+
+    @pytest.mark.credentials
+    def test_taken_one_time_task_cannot_be_taken_by_different_user(self, mozwebqa, existing_user, tasks_for_test_taken_one_time_task):
+        existing_user = existing_user.get()
+        task_details_page = TaskDetailsPage(mozwebqa)
+        task_details_page.go_to_page(tasks_for_test_taken_one_time_task['id'])
+        Assert.true(task_details_page.is_taken_button_visible)
+
+        login_required_page = task_details_page.click_get_started_button('login_required')
+        task_details_page = login_required_page.click_persona_login_button(existing_user)
+        Assert.true(task_details_page.is_taken_button_visible)

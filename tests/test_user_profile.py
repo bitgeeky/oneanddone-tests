@@ -17,6 +17,7 @@ class TestUserProfile:
 
     @pytest.mark.credentials
     def test_that_user_can_delete_profile(self, mozwebqa, existing_user):
+        existing_user = existing_user.get()
         home_page = HomePage(mozwebqa)
         home_page.go_to_page()
         Assert.false(home_page.is_user_logged_in)
@@ -60,6 +61,7 @@ class TestUserProfile:
 
     @pytest.mark.credentials
     def test_that_user_can_edit_profile(self, mozwebqa, existing_user):
+        existing_user = existing_user.get()
         home_page = HomePage(mozwebqa)
         home_page.go_to_page()
         Assert.false(home_page.is_user_logged_in)

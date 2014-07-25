@@ -45,27 +45,28 @@ def create_task_in_database(mozwebqa, task):
 
 @pytest.fixture(scope='function')
 def existing_user(request):
-    testuser = get_personatestuser()
-    mozwebqa = request.getfuncargvalue('mozwebqa')
-    username = testuser['email'].split('@')[0]
-    request.existing_user = create_user_in_database(
-        mozwebqa, MockUser(
-            email=testuser['email'],
-            username=username,
-            password=testuser['pass'],
-            profile={'name': 'mozwebqa_testuser',
-                     'username': username,
-                     'privacy_policy_accepted': True}
-        )
-    )
+    class UserFactory(object):
+        def get(self):
+            testuser = get_personatestuser()
+            mozwebqa = request.getfuncargvalue('mozwebqa')
+            username = testuser['email'].split('@')[0]
+            existing_user = create_user_in_database(
+                mozwebqa, MockUser(
+                    email=testuser['email'],
+                    username=username,
+                    password=testuser['pass'],
+                    profile={'name': 'mozwebqa_testuser',
+                             'username': username,
+                             'privacy_policy_accepted': True}
+                )
+            )
+            def fin():
+                delete_user_from_database(mozwebqa, existing_user)
 
-    def fin():
-        # Delete user from application database after the test
-        if request.existing_user:
-            delete_user_from_database(mozwebqa, request.existing_user)
+            request.addfinalizer(fin)
+            return existing_user
 
-    request.addfinalizer(fin)
-    return request.existing_user
+    return UserFactory()
 
 
 @pytest.fixture(scope='function')
@@ -104,3 +105,24 @@ def tasks_for_test_one_time_task(request):
 
     request.addfinalizer(fin)
     return request.tasks_for_test_one_time_task
+
+
+@pytest.fixture(scope='function')
+def tasks_for_test_taken_one_time_task(request, existing_user):
+    existing_user = existing_user.get()
+    mozwebqa = request.getfuncargvalue('mozwebqa')
+    taskattempt_set = [{"user": existing_user['email'], "state": 0}]
+    request.tasks_for_test_taken_one_time_task = create_task_in_database(
+        mozwebqa, MockTask(repeatable = False, taskattempt_set=taskattempt_set)
+    )
+
+    def fin():
+        # Delete tasks from application database after the test
+        if request.tasks_for_test_taken_one_time_task:
+            delete_task_from_database(
+                mozwebqa,
+                request.tasks_for_test_taken_one_time_task
+            )
+
+    request.addfinalizer(fin)
+    return request.tasks_for_test_taken_one_time_task

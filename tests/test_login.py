@@ -32,6 +32,7 @@ class TestLogin:
 
     @pytest.mark.credentials
     def test_that_name_of_existing_user_appears_on_login(self, mozwebqa, existing_user):
+        existing_user = existing_user.get()
         home_page = HomePage(mozwebqa)
         home_page.go_to_page()
         Assert.false(home_page.is_user_logged_in)

@@ -14,6 +14,7 @@ class TestUserTasks:
 
     @pytest.mark.credentials
     def test_that_user_can_complete_a_task(self, mozwebqa, existing_user):
+        existing_user = existing_user.get()
         home_page = HomePage(mozwebqa)
         home_page.go_to_page()
         Assert.false(home_page.is_user_logged_in)
@@ -71,6 +72,7 @@ class TestUserTasks:
 
     @pytest.mark.credentials
     def test_that_user_can_abandon_a_task(self, mozwebqa, existing_user):
+        existing_user = existing_user.get()
         home_page = HomePage(mozwebqa)
         home_page.go_to_page()
         Assert.false(home_page.is_user_logged_in)
