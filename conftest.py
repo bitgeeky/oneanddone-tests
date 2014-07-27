@@ -6,6 +6,7 @@
 
 import pytest
 import requests
+import datetime
 
 from mocks.mock_user import MockUser
 from mocks.mock_task import MockTask
@@ -126,3 +127,28 @@ def tasks_for_test_taken_one_time_task(request, existing_user):
 
     request.addfinalizer(fin)
     return request.tasks_for_test_taken_one_time_task
+
+
+@pytest.fixture(scope='function')
+def tasks_for_filter_tasks_according_to_estimated_time(request):
+    mozwebqa = request.getfuncargvalue('mozwebqa')
+    estimated_times = [15, 30, 45, 45]
+    keyword = 'keyword' + str(datetime.datetime.now())
+    request.tasks_for_filter_tasks_according_to_estimated_time = []
+    for time in estimated_times:
+        request.tasks_for_filter_tasks_according_to_estimated_time.append(
+            create_task_in_database(
+                mozwebqa, MockTask(execution_time=time, keyword_list=[keyword])
+            )
+        )
+
+    def fin():
+        # Delete tasks from application database after the test
+        if request.tasks_for_filter_tasks_according_to_estimated_time:
+            for task in request.tasks_for_filter_tasks_according_to_estimated_time:
+                delete_task_from_database(
+                    mozwebqa, task
+                )
+
+    request.addfinalizer(fin)
+    return request.tasks_for_filter_tasks_according_to_estimated_time
